@@ -7,7 +7,7 @@
     android:focusable="true">
 
     <RelativeLayout
-        android:id="@+id/no_songs_view"
+        android:id="@+id/no_songs_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -22,7 +22,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/content_fragment_main"
+        android:id="@+id/content_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -32,7 +32,7 @@
             android:layout_height="match_parent" />
 
         <RelativeLayout
-            android:id="@+id/layout_bottom_play"
+            android:id="@+id/bottom_play_layout"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
