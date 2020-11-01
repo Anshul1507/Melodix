@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.R
 import tech.anshul1507.melodix.Models.Songs
+import tech.anshul1507.melodix.SongPlayingScreen.SongPlayingFragment
 
 
 class HomeFragment : Fragment() {
@@ -32,7 +33,7 @@ class HomeFragment : Fragment() {
     private var trackPosition: Int = 0
     private var trackTitle: TextView? = null
 
-    object Statified {
+    object HomeObject {
         var mediaPlayer: MediaPlayer? = null
         var flag: Int? = 0
         var toolbar: Toolbar? = null
@@ -46,7 +47,7 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         initViews(view)
         setHasOptionsMenu(true)
-        Statified.toolbar = view?.findViewById(R.id.toolbar)
+        HomeObject.toolbar = view?.findViewById(R.id.toolbar)
         return view
     }
 
@@ -82,7 +83,6 @@ class HomeFragment : Fragment() {
             contentMainLayout?.visibility = View.INVISIBLE
             noSongsLayout?.visibility = View.VISIBLE
         } else {
-            //TODO:: set adapter for main recycler view
             homeScreenAdapter =
                 HomeScreenAdapter(songsList as ArrayList<Songs>, myActivity as Context)
             mainRecyclerView?.layoutManager = LinearLayoutManager(myActivity)
@@ -114,22 +114,54 @@ class HomeFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun bottomBarSetup() {
+    private fun bottomBarSetup() {
+
         bottomBarClickHandler()
 
-        //TODO:: set song name to title textview
-        //TODO:: song on complete listener
-        //TODO:: boolean check for song playing -> visibility of bottom bar
+        songTitle?.text = SongPlayingFragment.InitObject.currentSongHelper?.songTitle
+
+        SongPlayingFragment.InitObject.mediaPlayer?.setOnCompletionListener {
+            SongPlayingFragment.SongPlayingObject.onSongComplete()
+            songTitle?.text = SongPlayingFragment.InitObject.currentSongHelper?.songTitle
+        }
+
+        if(SongPlayingFragment.InitObject.mediaPlayer!=null &&  SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean){
+            nowPlayingBottomBar?.visibility = View.VISIBLE
+        }else{
+            nowPlayingBottomBar?.visibility = View.INVISIBLE
+        }
     }
 
     private fun bottomBarClickHandler() {
         nowPlayingBottomBar?.setOnClickListener {
-            //TODO:: start Now Playing screen
+            HomeObject.mediaPlayer = SongPlayingFragment.InitObject.mediaPlayer
+
+            val songPlayingFragment = SongPlayingFragment()
+            val args = Bundle()
+            args.putString("songArtist", SongPlayingFragment.InitObject.currentSongHelper?.songArtist)
+            args.putString("songTitle", SongPlayingFragment.InitObject.currentSongHelper?.songTitle)
+            args.putString("path", SongPlayingFragment.InitObject.currentSongHelper?.songPath)
+            args.putInt("songId", SongPlayingFragment.InitObject.currentSongHelper?.songId?.toInt() as Int)
+            args.putInt("songPosition", SongPlayingFragment.InitObject.currentSongHelper?.songIdx as Int)
+            args.putParcelableArrayList("songData", SongPlayingFragment.InitObject.fetchSongs)
+            args.putString("MainBottomBar", "success")
+            songPlayingFragment.arguments = args
+            fragmentManager?.beginTransaction()
+                ?.replace(R.id.fragment_container, songPlayingFragment)
+                ?.addToBackStack("SongPlayingFragment")
+                ?.commit()
         }
 
         playPauseButton?.setOnClickListener {
-            //TODO:: play/pause media player
-            //TODO:: change the play/pause icon accordingly
+            if (SongPlayingFragment.InitObject.mediaPlayer!=null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
+                SongPlayingFragment.InitObject.mediaPlayer?.pause()
+                trackPosition = SongPlayingFragment.InitObject.mediaPlayer?.currentPosition as Int
+                playPauseButton?.setBackgroundResource(R.drawable.play_icon)
+            } else {
+                SongPlayingFragment.InitObject.mediaPlayer?.seekTo(trackPosition)
+                SongPlayingFragment.InitObject.mediaPlayer?.start()
+                playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
+            }
         }
     }
 

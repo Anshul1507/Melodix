@@ -25,6 +25,7 @@ class SongPlayingFragment : Fragment() {
 
     object InitObject {
         var myActivity: Activity? = null
+        var myContext: Context? = null
         var mediaPlayer: MediaPlayer? = null
         var favButton: ImageButton? = null
         var startTimeText: TextView? = null
@@ -171,7 +172,7 @@ class SongPlayingFragment : Fragment() {
                 if (InitObject.currentSongHelper?.isLoop as Boolean) {
                     InitObject.currentSongHelper?.isPlaying = true
                     val nextSong = InitObject.fetchSongs?.get(InitObject.songIdx) as Songs
-                    InitObject.currentSongHelper?.sp = InitObject.songIdx
+                    InitObject.currentSongHelper?.songIdx = InitObject.songIdx
                     InitObject.currentSongHelper?.songPath = nextSong.songData
                     InitObject.currentSongHelper?.songTitle = nextSong.songTitle
                     InitObject.currentSongHelper?.songArtist = nextSong.artist
@@ -273,10 +274,10 @@ class SongPlayingFragment : Fragment() {
         InitObject.myActivity = context as Activity
     }
 
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
-        InitObject.myActivity = activity
-    }
+//    override fun onAttach(activity: Activity) {
+//        super.onAttach(activity)
+//        InitObject.myActivity = activity
+//    }
 
     override fun onResume() {
         super.onResume()
@@ -344,7 +345,7 @@ class SongPlayingFragment : Fragment() {
             InitObject.currentSongHelper?.songTitle = songTitle
             InitObject.currentSongHelper?.songArtist = songArtist
             InitObject.currentSongHelper?.songId = songId
-            InitObject.currentSongHelper?.sp = InitObject.songIdx
+            InitObject.currentSongHelper?.songIdx = InitObject.songIdx
             SongPlayingObject.updateTextViews(
                 InitObject.currentSongHelper?.songTitle as String,
                 InitObject.currentSongHelper?.songArtist as String
@@ -398,7 +399,10 @@ class SongPlayingFragment : Fragment() {
 
         //TODO:: Click Handlers
         val visualizationHandeler =
-            DbmHandler.Factory.newVisualizerHandler(InitObject.myActivity as Context, 0)
+            DbmHandler.Factory.newVisualizerHandler(
+                activity as Context,
+                0
+            )
         InitObject.audioVisulization?.linkTo(visualizationHandeler)
 
         //TODO:: Db check for fav icon
