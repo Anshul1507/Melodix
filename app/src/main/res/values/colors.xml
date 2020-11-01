@@ -10,4 +10,12 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <array name="primary_pattern">
+        <item>@color/primary_blue</item>
+        <item>@color/blue_500</item>
+        <item>@color/blue_200</item>
+        <item>@color/primary_purple</item>
+        <item>@color/purple_700</item>
+    </array>
 </resources>
