@@ -11,7 +11,7 @@
         android:layout_centerInParent="true">
 
         <TextView
-            android:id="@+id/trackTitle"
+            android:id="@+id/track_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -22,15 +22,14 @@
             android:textSize="17sp"
             android:textStyle="normal" />
 
-
         <TextView
-            android:id="@+id/trackArtist"
+            android:id="@+id/track_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/trackTitle"
+            android:layout_below="@+id/track_title"
             android:layout_marginLeft="20dp"
             android:paddingRight="7dp"
-            android:text="Singer Name"
+            android:text="Artist Name"
             android:textColor="#bdbdbd" />
 
     </RelativeLayout>

@@ -11,6 +11,8 @@ import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toolbar
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.R
 import tech.anshul1507.melodix.Songs
@@ -48,16 +50,17 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    private fun initViews(view : View){
+    private fun initViews(view: View) {
         nowPlayingBottomBar = view.findViewById(R.id.bottom_play_layout)
         playPauseButton = view.findViewById(R.id.btn_play_pause_main)
         songTitle = view.findViewById(R.id.song_title_text_main)
         contentMainLayout = view.findViewById(R.id.content_main_layout)
         noSongsLayout = view.findViewById(R.id.no_songs_layout)
         mainRecyclerView = view.findViewById(R.id.main_recycler_view)
-        trackTitle = view.findViewById(R.id.trackTitle)
+        trackTitle = view.findViewById(R.id.track_title)
 
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         myActivity = context as Activity
@@ -75,11 +78,16 @@ class HomeFragment : Fragment() {
         bottomBarSetup()
 
         songsList = getSongsFromDevice()
-        if(songsList.isNullOrEmpty()){
+        if (songsList.isNullOrEmpty()) {
             contentMainLayout?.visibility = View.INVISIBLE
             noSongsLayout?.visibility = View.VISIBLE
-        }else{
+        } else {
             //TODO:: set adapter for main recycler view
+            homeScreenAdapter =
+                HomeScreenAdapter(songsList as ArrayList<Songs>, myActivity as Context)
+            mainRecyclerView?.layoutManager = LinearLayoutManager(myActivity)
+            mainRecyclerView?.itemAnimator = DefaultItemAnimator()
+            mainRecyclerView?.adapter = homeScreenAdapter
         }
 
         //TODO:: sort songs according to prefs
@@ -88,14 +96,14 @@ class HomeFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.main_menu,menu)
+        inflater.inflate(R.menu.main_menu, menu)
         return
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_sort_ascending -> {
-                if(!songsList.isNullOrEmpty()){
+                if (!songsList.isNullOrEmpty()) {
                     //TODO:: Save to local db and sort accordingly
                 }
             }
@@ -106,7 +114,7 @@ class HomeFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun bottomBarSetup(){
+    fun bottomBarSetup() {
         bottomBarClickHandler()
 
         //TODO:: set song name to title textview
@@ -114,7 +122,7 @@ class HomeFragment : Fragment() {
         //TODO:: boolean check for song playing -> visibility of bottom bar
     }
 
-    private fun bottomBarClickHandler(){
+    private fun bottomBarClickHandler() {
         nowPlayingBottomBar?.setOnClickListener {
             //TODO:: start Now Playing screen
         }
@@ -129,7 +137,7 @@ class HomeFragment : Fragment() {
      * - getSongsFromPhone()
      * Function to fetch Songs from Device
      */
-    private fun getSongsFromDevice() : ArrayList<Songs> {
+    private fun getSongsFromDevice(): ArrayList<Songs> {
         var list = ArrayList<Songs>()
         val contentResolver = myActivity?.contentResolver
         val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
