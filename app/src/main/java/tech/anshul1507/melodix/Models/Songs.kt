@@ -1,4 +1,4 @@
-package tech.anshul1507.melodix
+package tech.anshul1507.melodix.Models
 
 import android.os.Parcel
 import android.os.Parcelable

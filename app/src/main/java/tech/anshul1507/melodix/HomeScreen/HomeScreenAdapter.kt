@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
 import tech.anshul1507.melodix.R
-import tech.anshul1507.melodix.Songs
+import tech.anshul1507.melodix.Models.Songs
 
 class HomeScreenAdapter(var songDetailsList: ArrayList<Songs>, var ctx: Context) :
     RecyclerView.Adapter<HomeScreenAdapter.MyViewHolder>() {

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.R
-import tech.anshul1507.melodix.Songs
+import tech.anshul1507.melodix.Models.Songs
 
 
 class HomeFragment : Fragment() {

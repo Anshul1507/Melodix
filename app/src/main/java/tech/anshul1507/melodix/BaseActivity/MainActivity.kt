@@ -1,4 +1,4 @@
-package tech.anshul1507.melodix
+package tech.anshul1507.melodix.BaseActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.HomeScreen.HomeFragment
+import tech.anshul1507.melodix.R
 
 class MainActivity : AppCompatActivity() {
 

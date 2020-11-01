@@ -1,4 +1,4 @@
-package tech.anshul1507.melodix
+package tech.anshul1507.melodix.SplashScreen
 
 import android.content.Context
 import android.content.Intent
@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import java.security.Permission
-import java.util.jar.Manifest
+import tech.anshul1507.melodix.BaseActivity.MainActivity
+import tech.anshul1507.melodix.R
 
 class SplashActivity : AppCompatActivity() {
 

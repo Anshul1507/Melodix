@@ -1,4 +1,4 @@
-package tech.anshul1507.melodix
+package tech.anshul1507.melodix.BaseActivity
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.HomeScreen.HomeFragment
+import tech.anshul1507.melodix.R
 
 class NavDrawerAdapter(
     private var itemList: Array<String>,

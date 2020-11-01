@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Melodix">
         <activity
-            android:name=".SplashActivity"
+            android:name=".SplashScreen.SplashActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.Melodix.NoActionBar">
             <intent-filter>
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".BaseActivity.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.Melodix.NoActionBar"/>
     </application>
