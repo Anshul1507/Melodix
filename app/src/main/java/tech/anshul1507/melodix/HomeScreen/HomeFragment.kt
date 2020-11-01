@@ -71,6 +71,19 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         //TODO:: local db methods
+
+        bottomBarSetup()
+
+        songsList = getSongsFromDevice()
+        if(songsList.isNullOrEmpty()){
+            contentMainLayout?.visibility = View.INVISIBLE
+            noSongsLayout?.visibility = View.VISIBLE
+        }else{
+            //TODO:: set adapter for main recycler view
+        }
+
+        //TODO:: sort songs according to prefs
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -94,18 +107,29 @@ class HomeFragment : Fragment() {
     }
 
     fun bottomBarSetup(){
+        bottomBarClickHandler()
 
+        //TODO:: set song name to title textview
+        //TODO:: song on complete listener
+        //TODO:: boolean check for song playing -> visibility of bottom bar
     }
 
-    fun bottomBarClickHandler(){
+    private fun bottomBarClickHandler(){
+        nowPlayingBottomBar?.setOnClickListener {
+            //TODO:: start Now Playing screen
+        }
 
+        playPauseButton?.setOnClickListener {
+            //TODO:: play/pause media player
+            //TODO:: change the play/pause icon accordingly
+        }
     }
 
     /**
      * - getSongsFromPhone()
      * Function to fetch Songs from Device
      */
-    fun getSongsFromPhone() : ArrayList<Songs> {
+    private fun getSongsFromDevice() : ArrayList<Songs> {
         var list = ArrayList<Songs>()
         val contentResolver = myActivity?.contentResolver
         val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
