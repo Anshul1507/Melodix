@@ -36,13 +36,11 @@ class HomeScreenAdapter(var songDetailsList: ArrayList<Songs>, var ctx: Context)
     )
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val song = songDetailsList.get(position)
+        val song = songDetailsList[position]
         holder.trackTitle?.text = song.songTitle
         holder.trackArtist?.text = song.artist
 
         holder.itemLayout?.setOnClickListener {
-            HomeFragment.HomeObject.mediaPlayer = SongPlayingFragment.InitObject.mediaPlayer
-
             val songPlayingFragment = SongPlayingFragment()
             val args = Bundle()
             args.putString("songArtist", song.artist)

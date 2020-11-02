@@ -8,11 +8,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.cleveroad.audiovisualization.AudioVisualization
 import com.cleveroad.audiovisualization.DbmHandler
 import com.cleveroad.audiovisualization.GLAudioVisualizationView
@@ -21,6 +20,7 @@ import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.Models.CurrentSongHelper
 import tech.anshul1507.melodix.Models.Songs
 import tech.anshul1507.melodix.R
+import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -82,7 +82,7 @@ class SongPlayingFragment : Fragment() {
         var PREFS_SHUFFLE = "Shuffle Feature"
         var PREFS_LOOP = "Loop Feature"
 
-        fun playNext(check: String) {
+        private fun playNext(check: String) {
 
             if (check.equals("PlayNextNormal", true)) {
                 InitObject.songIdx = InitObject.songIdx + 1
@@ -113,7 +113,7 @@ class SongPlayingFragment : Fragment() {
             try {
                 InitObject.mediaPlayer?.setDataSource(
                     InitObject.myActivity as Context,
-                    Uri.parse(InitObject.currentSongHelper?.songPath)
+                    Uri.fromFile(File(InitObject.currentSongHelper?.songPath as String))
                 )
                 InitObject.mediaPlayer?.prepare()
                 InitObject.mediaPlayer?.start()
@@ -188,7 +188,7 @@ class SongPlayingFragment : Fragment() {
                     try {
                         InitObject.mediaPlayer?.setDataSource(
                             InitObject.myActivity as Context,
-                            Uri.parse(InitObject.currentSongHelper?.songPath)
+                            Uri.fromFile(File(InitObject.currentSongHelper?.songPath as String))
                         )
                         InitObject.mediaPlayer?.prepare()
                         InitObject.mediaPlayer?.start()
@@ -213,8 +213,8 @@ class SongPlayingFragment : Fragment() {
             if (updatedSongTitle.equals("<unknown>", true)) {
                 updatedSongTitle = "unknown"
             }
-            InitObject.songTitleView?.setText(updatedSongTitle)
-            InitObject.songArtistView?.setText(updatedSongArtist)
+            InitObject.songTitleView?.text = updatedSongTitle
+            InitObject.songArtistView?.text = updatedSongArtist
         }
 
         fun processInformation(mediaPlayer: MediaPlayer) {
@@ -328,9 +328,9 @@ class SongPlayingFragment : Fragment() {
         InitObject.currentSongHelper?.isLoop = false
         InitObject.currentSongHelper?.isShuffle = false
         var path: String? = null
-        var songTitle: String? = null
-        var songArtist: String? = null
-        var songId: Long = 0
+        val songTitle: String?
+        val songArtist: String?
+        val songId: Long
 
         try {
             path = arguments?.getString("path")
@@ -360,16 +360,14 @@ class SongPlayingFragment : Fragment() {
         val fromMainBottomBar = arguments!!.getString("MainBottomBar")
         when {
             fromFavBottomBar != null -> {
-                //TODO :: assign mediaplayer from fav fragment
                 InitObject.mediaPlayer = FavoriteFragment.FavObject.mediaPlayer
             }
             fromMainBottomBar != null -> {
-                //TODO :: assign mediaplayer from home fragment
                 InitObject.mediaPlayer = HomeFragment.HomeObject.mediaPlayer
             }
             else -> {
                 if (InitObject.mediaPlayer != null) {
-                    if (InitObject.mediaPlayer?.isPlaying as Boolean) {
+                    if (InitObject.mediaPlayer?.isPlaying!!) {
                         InitObject.mediaPlayer?.pause()
                     }
                 }
@@ -377,10 +375,10 @@ class SongPlayingFragment : Fragment() {
                 InitObject.mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
 
                 try {
-                    Toast.makeText(requireContext(),path,Toast.LENGTH_SHORT).show()
+
                     InitObject.mediaPlayer?.setDataSource(
                         InitObject.myActivity as Context,
-                        Uri.parse(path)
+                        Uri.fromFile(File(path as String))
                     )
                     InitObject.mediaPlayer?.prepare()
                 } catch (e: Exception) {
@@ -445,17 +443,15 @@ class SongPlayingFragment : Fragment() {
 
     }
 
-    private fun clickHandler(){
+    private fun clickHandler() {
 
         InitObject.playPauseButton?.setOnClickListener {
 
-            if(InitObject.mediaPlayer?.isPlaying as Boolean){
-                Toast.makeText(requireContext(),"Play",Toast.LENGTH_SHORT).show()
+            if (InitObject.mediaPlayer?.isPlaying as Boolean) {
                 InitObject.mediaPlayer?.pause()
                 InitObject.currentSongHelper?.isPlaying = false
                 InitObject.playPauseButton?.setBackgroundResource(R.drawable.play_icon)
-            }else{
-                Toast.makeText(requireContext(),"Pause",Toast.LENGTH_SHORT).show()
+            } else {
                 InitObject.mediaPlayer?.start()
                 InitObject.currentSongHelper?.isPlaying = true
                 InitObject.playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
