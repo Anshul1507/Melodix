@@ -1,4 +1,4 @@
-package tech.anshul1507.melodix.HomeScreen
+package tech.anshul1507.melodix.FavoriteScreen
 
 import android.content.Context
 import android.os.Bundle
@@ -13,9 +13,8 @@ import tech.anshul1507.melodix.R
 import tech.anshul1507.melodix.Models.Songs
 import tech.anshul1507.melodix.SongPlayingScreen.SongPlayingFragment
 
-class HomeScreenAdapter(var songDetailsList: ArrayList<Songs>, var ctx: Context) :
-    RecyclerView.Adapter<HomeScreenAdapter.MyViewHolder>() {
-
+class FavScreenAdapter(var songDetailsList: ArrayList<Songs>, var ctx: Context) :
+    RecyclerView.Adapter<FavScreenAdapter.MyViewHolder>() {
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var trackTitle: TextView? = null
@@ -52,7 +51,7 @@ class HomeScreenAdapter(var songDetailsList: ArrayList<Songs>, var ctx: Context)
             songPlayingFragment.arguments = args
             (ctx as FragmentActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, songPlayingFragment)
-                .addToBackStack("SongPlayingFragment")
+                .addToBackStack("SongPlayingFragmentFavorite")
                 .commit()
         }
     }

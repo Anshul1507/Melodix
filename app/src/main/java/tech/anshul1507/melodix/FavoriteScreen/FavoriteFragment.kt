@@ -5,7 +5,6 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -13,9 +12,11 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.DB.LocalDB
-import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.Models.Songs
 import tech.anshul1507.melodix.R
 import tech.anshul1507.melodix.SongPlayingScreen.SongPlayingFragment
@@ -30,10 +31,10 @@ class FavoriteFragment : Fragment() {
     private var favRecyclerView: RecyclerView? = null
     private var trackPosition: Int = 0
     private var favSongsList: ArrayList<Songs>? = null
+    private var dbInstance: LocalDB? = null
 
     object FavObject {
         var mediaPlayer: MediaPlayer? = null
-        var flag: Int = 0
     }
 
     override fun onCreateView(
@@ -43,6 +44,7 @@ class FavoriteFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_favorite, container, false)
         myActivity?.title = "Favorites"
         setHasOptionsMenu(true)
+        dbInstance = LocalDB(myActivity)
         noFavorites = view?.findViewById(R.id.no_favorite_layout)
         nowPlayingBottomBar = view.findViewById(R.id.bottom_play_layout)
         songTitle = view.findViewById(R.id.song_title_text_fav)
@@ -67,8 +69,10 @@ class FavoriteFragment : Fragment() {
         val item = menu.findItem(R.id.action_sort)
         item?.isVisible = false
     }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        fetchFavoriteSongs()
         bottomBarSetup()
     }
 
@@ -83,9 +87,9 @@ class FavoriteFragment : Fragment() {
             songTitle?.text = SongPlayingFragment.InitObject.currentSongHelper?.songTitle
         }
 
-        if(SongPlayingFragment.InitObject.mediaPlayer!=null &&  SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean){
+        if (SongPlayingFragment.InitObject.mediaPlayer != null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
             nowPlayingBottomBar?.visibility = View.VISIBLE
-        }else{
+        } else {
             nowPlayingBottomBar?.visibility = View.INVISIBLE
         }
     }
@@ -96,11 +100,20 @@ class FavoriteFragment : Fragment() {
 
             val songPlayingFragment = SongPlayingFragment()
             val args = Bundle()
-            args.putString("songArtist", SongPlayingFragment.InitObject.currentSongHelper?.songArtist)
+            args.putString(
+                "songArtist",
+                SongPlayingFragment.InitObject.currentSongHelper?.songArtist
+            )
             args.putString("songTitle", SongPlayingFragment.InitObject.currentSongHelper?.songTitle)
             args.putString("path", SongPlayingFragment.InitObject.currentSongHelper?.songPath)
-            args.putInt("songId", SongPlayingFragment.InitObject.currentSongHelper?.songId?.toInt() as Int)
-            args.putInt("songPosition", SongPlayingFragment.InitObject.currentSongHelper?.songIdx as Int)
+            args.putInt(
+                "songId",
+                SongPlayingFragment.InitObject.currentSongHelper?.songId?.toInt() as Int
+            )
+            args.putInt(
+                "songPosition",
+                SongPlayingFragment.InitObject.currentSongHelper?.songIdx as Int
+            )
             args.putParcelableArrayList("songData", SongPlayingFragment.InitObject.fetchSongs)
             args.putString("FavBottomBar", "success")
             songPlayingFragment.arguments = args
@@ -111,7 +124,7 @@ class FavoriteFragment : Fragment() {
         }
 
         playPauseButton?.setOnClickListener {
-            if (SongPlayingFragment.InitObject.mediaPlayer!=null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
+            if (SongPlayingFragment.InitObject.mediaPlayer != null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
                 SongPlayingFragment.InitObject.mediaPlayer?.pause()
                 trackPosition = SongPlayingFragment.InitObject.mediaPlayer?.currentPosition as Int
                 playPauseButton?.setBackgroundResource(R.drawable.play_icon)
@@ -121,6 +134,36 @@ class FavoriteFragment : Fragment() {
                 playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
             }
         }
+    }
+
+    private fun fetchFavoriteSongs() {
+        if (dbInstance?.checkSize() as Int > 0) {
+            favSongsList = ArrayList() // Make a new instance
+            val listSongsFromDevice = getSongsFromDevice()
+            if (listSongsFromDevice.isEmpty()) {
+                for (item in listSongsFromDevice) {
+                    if (dbInstance?.queryDBList(item.songID) == 1) {
+                        favSongsList!!.add(item)
+                    }
+                }
+            }
+            if (favSongsList!!.isEmpty()) {
+                favRecyclerView?.visibility = View.INVISIBLE
+                noFavorites?.visibility = View.VISIBLE
+            } else {
+                val favAdapter =
+                    FavScreenAdapter(favSongsList as ArrayList<Songs>, myActivity as Context)
+                favRecyclerView?.layoutManager = LinearLayoutManager(activity)
+                favRecyclerView?.itemAnimator = DefaultItemAnimator()
+                favRecyclerView?.adapter = favAdapter
+                favRecyclerView?.setHasFixedSize(true)
+            }
+        } else {
+            favRecyclerView?.visibility = View.INVISIBLE
+            noFavorites?.visibility = View.VISIBLE
+        }
+
+
     }
 
     /**
