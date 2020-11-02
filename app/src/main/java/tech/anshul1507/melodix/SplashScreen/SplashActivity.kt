@@ -13,7 +13,14 @@ import tech.anshul1507.melodix.R
 
 class SplashActivity : AppCompatActivity() {
 
-    private var permissionsArray = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    private var permissionsArray = arrayOf(
+        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+        android.Manifest.permission.MODIFY_AUDIO_SETTINGS,
+        android.Manifest.permission.READ_PHONE_STATE,
+        android.Manifest.permission.PROCESS_OUTGOING_CALLS,
+        android.Manifest.permission.RECORD_AUDIO
+    )
+
     private var magicNumber = 201
 
     override fun onCreate(savedInstanceState: Bundle?) {
