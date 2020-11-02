@@ -12,9 +12,12 @@ import androidx.fragment.app.Fragment
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import com.cleveroad.audiovisualization.AudioVisualization
 import com.cleveroad.audiovisualization.DbmHandler
 import com.cleveroad.audiovisualization.GLAudioVisualizationView
+import tech.anshul1507.melodix.FavoriteScreen.FavoriteFragment
+import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.Models.CurrentSongHelper
 import tech.anshul1507.melodix.Models.Songs
 import tech.anshul1507.melodix.R
@@ -25,7 +28,6 @@ class SongPlayingFragment : Fragment() {
 
     object InitObject {
         var myActivity: Activity? = null
-        var myContext: Context? = null
         var mediaPlayer: MediaPlayer? = null
         var favButton: ImageButton? = null
         var startTimeText: TextView? = null
@@ -274,10 +276,10 @@ class SongPlayingFragment : Fragment() {
         InitObject.myActivity = context as Activity
     }
 
-//    override fun onAttach(activity: Activity) {
-//        super.onAttach(activity)
-//        InitObject.myActivity = activity
-//    }
+    override fun onAttach(activity: Activity) {
+        super.onAttach(activity)
+        InitObject.myActivity = activity
+    }
 
     override fun onResume() {
         super.onResume()
@@ -354,14 +356,16 @@ class SongPlayingFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        val fromFavBottomBar = arguments!!.getString("FavBottomBar") as? String
-        val fromMainBottomBar = arguments!!.getString("MainBottomBar") as? String
+        val fromFavBottomBar = arguments!!.getString("FavBottomBar")
+        val fromMainBottomBar = arguments!!.getString("MainBottomBar")
         when {
             fromFavBottomBar != null -> {
                 //TODO :: assign mediaplayer from fav fragment
+                InitObject.mediaPlayer = FavoriteFragment.FavObject.mediaPlayer
             }
             fromMainBottomBar != null -> {
                 //TODO :: assign mediaplayer from home fragment
+                InitObject.mediaPlayer = HomeFragment.HomeObject.mediaPlayer
             }
             else -> {
                 if (InitObject.mediaPlayer != null) {
@@ -373,6 +377,7 @@ class SongPlayingFragment : Fragment() {
                 InitObject.mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
 
                 try {
+                    Toast.makeText(requireContext(),path,Toast.LENGTH_SHORT).show()
                     InitObject.mediaPlayer?.setDataSource(
                         InitObject.myActivity as Context,
                         Uri.parse(path)
@@ -398,9 +403,10 @@ class SongPlayingFragment : Fragment() {
         }
 
         //TODO:: Click Handlers
+        clickHandler()
         val visualizationHandeler =
             DbmHandler.Factory.newVisualizerHandler(
-                activity as Context,
+                InitObject.myActivity as Context,
                 0
             )
         InitObject.audioVisulization?.linkTo(visualizationHandeler)
@@ -437,5 +443,23 @@ class SongPlayingFragment : Fragment() {
             InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
         }
 
+    }
+
+    private fun clickHandler(){
+
+        InitObject.playPauseButton?.setOnClickListener {
+
+            if(InitObject.mediaPlayer?.isPlaying as Boolean){
+                Toast.makeText(requireContext(),"Play",Toast.LENGTH_SHORT).show()
+                InitObject.mediaPlayer?.pause()
+                InitObject.currentSongHelper?.isPlaying = false
+                InitObject.playPauseButton?.setBackgroundResource(R.drawable.play_icon)
+            }else{
+                Toast.makeText(requireContext(),"Pause",Toast.LENGTH_SHORT).show()
+                InitObject.mediaPlayer?.start()
+                InitObject.currentSongHelper?.isPlaying = true
+                InitObject.playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
+            }
+        }
     }
 }

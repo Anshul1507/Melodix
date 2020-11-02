@@ -41,7 +41,6 @@ class HomeScreenAdapter(var songDetailsList: ArrayList<Songs>, var ctx: Context)
         holder.trackArtist?.text = song.artist
 
         holder.itemLayout?.setOnClickListener {
-            //TODO :: play song on click and intent to playing screen
             HomeFragment.HomeObject.mediaPlayer = SongPlayingFragment.InitObject.mediaPlayer
 
             val songPlayingFragment = SongPlayingFragment()
