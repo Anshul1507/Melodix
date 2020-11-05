@@ -20,6 +20,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Melodix">
+
+        <receiver android:name=".utils.NotificationService">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".SplashScreen.SplashActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
