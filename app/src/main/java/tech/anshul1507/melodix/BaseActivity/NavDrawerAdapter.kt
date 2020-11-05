@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.FavoriteScreen.FavoriteFragment
 import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.R
+import tech.anshul1507.melodix.SettingScreen.SettingFragment
 
 class NavDrawerAdapter(
     private var itemList: Array<String>,
@@ -45,7 +46,9 @@ class NavDrawerAdapter(
                         .replace(R.id.fragment_container, favFragment).commit()
                 }
                 2 -> {
-                    //TODO:: Settings Fragment
+                    val settingFragment = SettingFragment()
+                    (context as MainActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, settingFragment).commit()
                 }
             }
             MainActivity.BaseObject.drawerLayout?.closeDrawers()
