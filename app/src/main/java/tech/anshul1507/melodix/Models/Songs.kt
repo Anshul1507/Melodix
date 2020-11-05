@@ -26,13 +26,13 @@ class Songs(var songID: Long, var songTitle: String, var artist: String, var son
         return 0
     }
 
-    object Statified{
-        var nameComparator: Comparator<Songs> = Comparator<Songs> { song1, song2 ->
+    object SongObject{
+        var nameComparator: Comparator<Songs> = Comparator { song1, song2 ->
             val songOne = song1.songTitle.toUpperCase(Locale.getDefault())
             val songTwo = song2.songTitle.toUpperCase(Locale.getDefault())
             songOne.compareTo(songTwo)
         }
-        var dateComparator: Comparator<Songs> = Comparator<Songs> { song1, song2 ->
+        var dateComparator: Comparator<Songs> = Comparator { song1, song2 ->
             val songOne = song1.dateAdded.toDouble()
             val songTwo = song2.dateAdded.toDouble()
             songTwo.compareTo(songOne)

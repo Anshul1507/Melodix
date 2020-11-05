@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import tech.anshul1507.melodix.R
 import tech.anshul1507.melodix.Models.Songs
 import tech.anshul1507.melodix.SongPlayingScreen.SongPlayingFragment
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeFragment : Fragment() {
@@ -74,11 +76,14 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        //TODO:: local db methods
 
         bottomBarSetup()
-
         songsList = getSongsFromDevice()
+
+        val prefs = activity?.getSharedPreferences("action_sort", Context.MODE_PRIVATE)
+        val actionSortAscending = prefs?.getString("action_sort_ascending", "true")
+        val actionSortRecent = prefs?.getString("action_sort_recent", "false")
+
         if (songsList.isNullOrEmpty()) {
             contentMainLayout?.visibility = View.INVISIBLE
             noSongsLayout?.visibility = View.VISIBLE
@@ -90,7 +95,15 @@ class HomeFragment : Fragment() {
             mainRecyclerView?.adapter = homeScreenAdapter
         }
 
-        //TODO:: sort songs according to prefs
+        if (songsList.isNullOrEmpty()) {
+            if (actionSortAscending!!.equals("true", ignoreCase = true)) {
+                Collections.sort(songsList, Songs.SongObject.nameComparator)
+                homeScreenAdapter?.notifyDataSetChanged()
+            } else if (actionSortRecent!!.equals("true", ignoreCase = true)) {
+                Collections.sort(songsList, Songs.SongObject.dateComparator)
+                homeScreenAdapter?.notifyDataSetChanged()
+            }
+        }
 
     }
 
@@ -104,11 +117,26 @@ class HomeFragment : Fragment() {
         when (item.itemId) {
             R.id.action_sort_ascending -> {
                 if (!songsList.isNullOrEmpty()) {
-                    //TODO:: Save to local db and sort accordingly
+                    val editor =
+                        myActivity?.getSharedPreferences("action_sort", Context.MODE_PRIVATE)
+                            ?.edit()
+                    editor?.putString("action_sort_ascending", "true")
+                    editor?.putString("action_sort_recent", "false")
+                    editor?.apply()
+                    Collections.sort(songsList, Songs.SongObject.nameComparator)
                 }
+                homeScreenAdapter?.notifyDataSetChanged()
             }
             R.id.action_sort_recent -> {
-                //TODO:: Save to local db and sort accordingly
+                val editor =
+                    myActivity?.getSharedPreferences("action_sort", Context.MODE_PRIVATE)?.edit()
+                editor?.putString("action_sort_recent", "true")
+                editor?.putString("action_sort_ascending", "false")
+                editor?.apply()
+                if (!songsList.isNullOrEmpty()) {
+                    Collections.sort(songsList, Songs.SongObject.dateComparator)
+                }
+                homeScreenAdapter?.notifyDataSetChanged()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -125,9 +153,9 @@ class HomeFragment : Fragment() {
             songTitle?.text = SongPlayingFragment.InitObject.currentSongHelper?.songTitle
         }
 
-        if(SongPlayingFragment.InitObject.mediaPlayer!=null &&  SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean){
+        if (SongPlayingFragment.InitObject.mediaPlayer != null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
             nowPlayingBottomBar?.visibility = View.VISIBLE
-        }else{
+        } else {
             nowPlayingBottomBar?.visibility = View.INVISIBLE
         }
     }
@@ -138,11 +166,20 @@ class HomeFragment : Fragment() {
 
             val songPlayingFragment = SongPlayingFragment()
             val args = Bundle()
-            args.putString("songArtist", SongPlayingFragment.InitObject.currentSongHelper?.songArtist)
+            args.putString(
+                "songArtist",
+                SongPlayingFragment.InitObject.currentSongHelper?.songArtist
+            )
             args.putString("songTitle", SongPlayingFragment.InitObject.currentSongHelper?.songTitle)
             args.putString("path", SongPlayingFragment.InitObject.currentSongHelper?.songPath)
-            args.putInt("songId", SongPlayingFragment.InitObject.currentSongHelper?.songId?.toInt() as Int)
-            args.putInt("songPosition", SongPlayingFragment.InitObject.currentSongHelper?.songIdx as Int)
+            args.putInt(
+                "songId",
+                SongPlayingFragment.InitObject.currentSongHelper?.songId?.toInt() as Int
+            )
+            args.putInt(
+                "songPosition",
+                SongPlayingFragment.InitObject.currentSongHelper?.songIdx as Int
+            )
             args.putParcelableArrayList("songData", SongPlayingFragment.InitObject.fetchSongs)
             args.putString("MainBottomBar", "success")
             songPlayingFragment.arguments = args
@@ -153,7 +190,7 @@ class HomeFragment : Fragment() {
         }
 
         playPauseButton?.setOnClickListener {
-            if (SongPlayingFragment.InitObject.mediaPlayer!=null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
+            if (SongPlayingFragment.InitObject.mediaPlayer != null && SongPlayingFragment.InitObject.mediaPlayer?.isPlaying as Boolean) {
                 SongPlayingFragment.InitObject.mediaPlayer?.pause()
                 trackPosition = SongPlayingFragment.InitObject.mediaPlayer?.currentPosition as Int
                 playPauseButton?.setBackgroundResource(R.drawable.play_icon)
