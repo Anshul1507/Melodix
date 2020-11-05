@@ -85,8 +85,24 @@ class SongPlayingFragment : Fragment() {
     object SongPlayingObject {
         var PREFS_SHUFFLE = "Shuffle Feature"
         var PREFS_LOOP = "Loop Feature"
-
-        private fun playNext(check: String) {
+        fun checkAndSetFavIcon(){
+            if (InitObject.instanceDB?.checkIfIdExists(InitObject.currentSongHelper?.songId?.toInt() as Int) as Boolean) {
+                InitObject.favButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        InitObject.myActivity!!,
+                        R.drawable.favorite_on
+                    )
+                )
+            } else {
+                InitObject.favButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        InitObject.myActivity!!,
+                        R.drawable.favorite_off
+                    )
+                )
+            }
+        }
+        fun playNext(check: String) {
 
             if (check.equals("PlayNextNormal", true)) {
                 InitObject.songIdx = InitObject.songIdx + 1
@@ -126,7 +142,7 @@ class SongPlayingFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            //TODO:: DB check for fav icon
+            checkAndSetFavIcon()
         }
 
         fun playPrevious() {
@@ -166,7 +182,7 @@ class SongPlayingFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            //TODO:: DB check for fav icon
+            checkAndSetFavIcon()
         }
 
         fun onSongComplete() {
@@ -205,7 +221,7 @@ class SongPlayingFragment : Fragment() {
                     InitObject.currentSongHelper?.isPlaying = true
                 }
             }
-            //TODO:: DB Check for fav icon
+            checkAndSetFavIcon()
         }
 
         fun updateTextViews(songTitle: String, songArtist: String) {
@@ -403,21 +419,15 @@ class SongPlayingFragment : Fragment() {
             SongPlayingObject.onSongComplete()
         }
 
-        //TODO:: Click Handlers
         clickHandler()
-        val visualizationHandeler =
+        SongPlayingObject.checkAndSetFavIcon()
+
+        val visualizationHandler =
             DbmHandler.Factory.newVisualizerHandler(
                 InitObject.myActivity as Context,
                 0
             )
-        InitObject.audioVisulization?.linkTo(visualizationHandeler)
-        if (InitObject.instanceDB?.checkIfIdExists(InitObject.currentSongHelper?.songId?.toInt() as Int) as Boolean) {
-            InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!,R.drawable.favorite_on))
-        } else {
-            InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!,R.drawable.favorite_off))
-        }
-        //TODO:: Db check for fav icon
-
+        InitObject.audioVisulization?.linkTo(visualizationHandler)
 
         val shufflePrefs = InitObject.myActivity?.getSharedPreferences(
             SongPlayingObject.PREFS_SHUFFLE,
@@ -454,23 +464,34 @@ class SongPlayingFragment : Fragment() {
 
         InitObject.favButton?.setOnClickListener {
             if (InitObject.instanceDB?.checkIfIdExists(InitObject.currentSongHelper?.songId?.toInt() as Int) as Boolean) {
-                InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!, R.drawable.favorite_off))
+                InitObject.favButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        InitObject.myActivity!!,
+                        R.drawable.favorite_off
+                    )
+                )
                 InitObject.instanceDB?.deleteFavorite(InitObject.currentSongHelper?.songId?.toInt() as Int)
-                Toast.makeText(InitObject.myActivity!!, "Removed from Favorite", Toast.LENGTH_SHORT).show()
+                Toast.makeText(InitObject.myActivity!!, "Removed from Favorite", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!, R.drawable.favorite_on))
+                InitObject.favButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        InitObject.myActivity!!,
+                        R.drawable.favorite_on
+                    )
+                )
                 InitObject.instanceDB?.storeFavorite(
                     InitObject.currentSongHelper?.songId?.toInt() as Int,
                     InitObject.currentSongHelper?.songTitle,
                     InitObject.currentSongHelper?.songArtist,
                     InitObject.currentSongHelper?.songPath
                 )
-                Toast.makeText(InitObject.myActivity!!, "Added to Favorite", Toast.LENGTH_SHORT).show()
+                Toast.makeText(InitObject.myActivity!!, "Added to Favorite", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
         InitObject.playPauseButton?.setOnClickListener {
-
             if (InitObject.mediaPlayer?.isPlaying as Boolean) {
                 InitObject.mediaPlayer?.pause()
                 InitObject.currentSongHelper?.isPlaying = false
@@ -482,5 +503,91 @@ class SongPlayingFragment : Fragment() {
             }
         }
 
+        InitObject.shuffleButton?.setOnClickListener {
+            val editorShuffle = InitObject.myActivity?.getSharedPreferences(
+                SongPlayingObject.PREFS_SHUFFLE,
+                Context.MODE_PRIVATE
+            )?.edit()
+            val editorLoop = InitObject.myActivity?.getSharedPreferences(
+                SongPlayingObject.PREFS_LOOP,
+                Context.MODE_PRIVATE
+            )?.edit()
+
+            if (InitObject.currentSongHelper?.isShuffle as Boolean) {
+                InitObject.currentSongHelper?.isShuffle = false
+                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+                editorShuffle?.putBoolean("feature", false)
+                editorShuffle?.apply()
+            } else {
+                InitObject.currentSongHelper?.isShuffle = true;
+                InitObject.currentSongHelper?.isLoop = false
+                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_icon)
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+                editorShuffle?.putBoolean("feature", true)
+                editorShuffle?.apply()
+                editorLoop?.putBoolean("feature", false)
+                editorLoop?.apply()
+            }
+        }
+        InitObject.nextButton?.setOnClickListener {
+            InitObject.currentSongHelper?.isPlaying = true
+            InitObject.playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
+            val prefs = InitObject.myActivity?.getSharedPreferences(
+                SongPlayingObject.PREFS_LOOP,
+                Context.MODE_PRIVATE
+            )?.edit()
+            prefs?.putBoolean("feature", false)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+            InitObject.currentSongHelper?.isLoop = false
+
+            if (InitObject.currentSongHelper?.isShuffle as Boolean) {
+                SongPlayingObject.playNext("PlayNextLikeNormalShuffle")
+            } else {
+                SongPlayingObject.playNext("PlayNextNormal")
+            }
+        }
+        InitObject.previousButton?.setOnClickListener {
+            InitObject.playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
+            val prefs = InitObject.myActivity?.getSharedPreferences(
+                SongPlayingObject.PREFS_LOOP,
+                Context.MODE_PRIVATE
+            )?.edit()
+            prefs?.putBoolean("feature", false)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+            InitObject.currentSongHelper?.isLoop = false
+            InitObject.currentSongHelper?.isPlaying = true
+
+            if (InitObject.currentSongHelper?.isLoop as Boolean) {
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+            }
+
+            SongPlayingObject.playPrevious()
+        }
+        InitObject.loopButton?.setOnClickListener {
+            val editorShuffle = InitObject.myActivity?.getSharedPreferences(
+                SongPlayingObject.PREFS_SHUFFLE,
+                Context.MODE_PRIVATE
+            )?.edit()
+            val editorLoop = InitObject.myActivity?.getSharedPreferences(
+                SongPlayingObject.PREFS_LOOP,
+                Context.MODE_PRIVATE
+            )?.edit()
+            if (InitObject.currentSongHelper?.isLoop as Boolean) {
+                InitObject.currentSongHelper?.isLoop = false
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+                editorLoop?.putBoolean("feature", false)
+                editorLoop?.apply()
+            } else {
+                editorLoop?.putBoolean("feature", true)
+                editorLoop?.apply()
+                editorShuffle?.putBoolean("feature", false)
+                editorShuffle?.apply()
+                InitObject.currentSongHelper?.isLoop = true
+                InitObject.currentSongHelper?.isShuffle = false
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_icon)
+                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+            }
+        }
     }
+
 }
