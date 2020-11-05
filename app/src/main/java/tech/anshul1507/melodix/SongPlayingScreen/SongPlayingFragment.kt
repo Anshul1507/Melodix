@@ -2,6 +2,10 @@ package tech.anshul1507.melodix.SongPlayingScreen
 
 import android.app.Activity
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -26,8 +30,13 @@ import tech.anshul1507.melodix.R
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.sqrt
 
 class SongPlayingFragment : Fragment() {
+
+    var mAcceleration: Float = 0f
+    var mAccelerationCurrent: Float = 0f
+    var mAccelerationLast: Float = 0f
 
     object InitObject {
         var myActivity: Activity? = null
@@ -49,6 +58,12 @@ class SongPlayingFragment : Fragment() {
         var glView: GLAudioVisualizationView? = null
         var currentSongHelper: CurrentSongHelper? = null
         var songIdx: Int = 0
+
+        var shakeFlag: Int = 0
+        var MY_PREFS_NAME = "ShakeFeature"
+        var mSensorManager: SensorManager? = null
+        var mSensorListener: SensorEventListener? = null
+
         var updateSongTime = object : Runnable {
             override fun run() {
                 seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -85,7 +100,7 @@ class SongPlayingFragment : Fragment() {
     object SongPlayingObject {
         var PREFS_SHUFFLE = "Shuffle Feature"
         var PREFS_LOOP = "Loop Feature"
-        fun checkAndSetFavIcon(){
+        fun checkAndSetFavIcon() {
             if (InitObject.instanceDB?.checkIfIdExists(InitObject.currentSongHelper?.songId?.toInt() as Int) as Boolean) {
                 InitObject.favButton?.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -102,6 +117,7 @@ class SongPlayingFragment : Fragment() {
                 )
             }
         }
+
         fun playNext(check: String) {
 
             if (check.equals("PlayNextNormal", true)) {
@@ -304,11 +320,27 @@ class SongPlayingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         InitObject.audioVisulization?.onResume()
+        InitObject.mSensorManager?.registerListener(
+            InitObject.mSensorListener,
+            InitObject.mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+        mAcceleration = 0.0f
+        mAccelerationCurrent = SensorManager.GRAVITY_EARTH
+        mAccelerationLast = SensorManager.GRAVITY_EARTH
+        handleShakeFeature()
     }
 
     override fun onPause() {
         InitObject.audioVisulization?.onPause()
         super.onPause()
+        InitObject.mSensorManager?.unregisterListener(InitObject.mSensorListener)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        InitObject.mSensorManager =
+            InitObject.myActivity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
     override fun onDestroyView() {
@@ -586,6 +618,36 @@ class SongPlayingFragment : Fragment() {
                 InitObject.currentSongHelper?.isShuffle = false
                 InitObject.loopButton?.setBackgroundResource(R.drawable.loop_icon)
                 InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+            }
+        }
+    }
+
+    fun handleShakeFeature() {
+
+        InitObject.mSensorListener = object : SensorEventListener {
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+            }
+
+            override fun onSensorChanged(event: SensorEvent) {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+                mAccelerationLast = mAccelerationCurrent
+                mAccelerationCurrent = sqrt(((x * x + y * y + z * z).toDouble())).toFloat()
+
+                val delta = mAccelerationCurrent - mAccelerationLast
+                mAcceleration = mAcceleration * 0.9f + delta
+
+                if (mAcceleration > 12) {
+                    val prefs = InitObject.myActivity?.getSharedPreferences(
+                        InitObject.MY_PREFS_NAME,
+                        Context.MODE_PRIVATE
+                    )
+                    val isAllowed = prefs?.getBoolean("feature", false)
+                    if (isAllowed as Boolean) {
+                        SongPlayingObject.playNext("PlayNextNormal")
+                    }
+                }
             }
         }
     }
