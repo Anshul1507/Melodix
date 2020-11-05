@@ -85,7 +85,10 @@
                 android:id="@+id/seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:progressDrawable="@drawable/progress_player_bg"
+                android:thumb="@drawable/progress_thumb" />
 
             <TextView
                 android:id="@+id/start_time"
