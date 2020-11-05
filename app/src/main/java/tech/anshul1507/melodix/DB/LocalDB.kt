@@ -3,13 +3,14 @@ package tech.anshul1507.melodix.DB
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class LocalDB : SQLiteOpenHelper {
 
     object DBObject {
-        const val DB_NAME = "MelodixDB"
+        const val DB_NAME = "MelodixDatabase"
         const val DB_VERSION = 1
         const val TABLE_NAME = "FavoriteTable"
         const val COL_ID = "SongID"
@@ -40,7 +41,7 @@ class LocalDB : SQLiteOpenHelper {
         sqliteDB?.execSQL(
             "CREATE TABLE " +
                     DBObject.TABLE_NAME + "( " +
-                    DBObject.COL_ID + "INTEGER," +
+                    DBObject.COL_ID + " INTEGER," +
                     DBObject.COL_TITLE + " STRING," +
                     DBObject.COL_ARTIST + " STRING," +
                     DBObject.COL_PATH + " STRING" + ");"
@@ -130,6 +131,22 @@ class LocalDB : SQLiteOpenHelper {
             return 0
         }
         return counter
+    }
+
+    fun checkIfIdExists(_id: Int): Boolean {
+        var storeId: Int
+        val db = this.readableDatabase
+
+        val queryParams = "SELECT * FROM " + DBObject.TABLE_NAME + " WHERE SongID='$_id';"
+        val cSor: Cursor = db.rawQuery(queryParams,null)
+        if (cSor.moveToFirst()) {
+            do {
+                storeId = cSor.getInt((cSor.getColumnIndexOrThrow(DBObject.COL_ID)))
+            } while (cSor.moveToNext())
+        } else {
+            return false
+        }
+        return storeId != -1000
     }
 
 }

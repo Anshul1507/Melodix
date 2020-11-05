@@ -11,10 +11,13 @@ import android.view.*
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.cleveroad.audiovisualization.AudioVisualization
 import com.cleveroad.audiovisualization.DbmHandler
 import com.cleveroad.audiovisualization.GLAudioVisualizationView
+import tech.anshul1507.melodix.DB.LocalDB
 import tech.anshul1507.melodix.FavoriteScreen.FavoriteFragment
 import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.Models.CurrentSongHelper
@@ -40,6 +43,7 @@ class SongPlayingFragment : Fragment() {
         var seekBar: SeekBar? = null
         var songArtistView: TextView? = null
         var songTitleView: TextView? = null
+        var instanceDB: LocalDB? = null
         var fetchSongs: ArrayList<Songs>? = null
         var audioVisulization: AudioVisualization? = null
         var glView: GLAudioVisualizationView? = null
@@ -320,8 +324,7 @@ class SongPlayingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        //TODO:: DB CHECK for fav content
-
+        InitObject.instanceDB = LocalDB(InitObject.myActivity)
         InitObject.currentSongHelper = CurrentSongHelper()
 
         InitObject.currentSongHelper?.isPlaying = true
@@ -408,7 +411,11 @@ class SongPlayingFragment : Fragment() {
                 0
             )
         InitObject.audioVisulization?.linkTo(visualizationHandeler)
-
+        if (InitObject.instanceDB?.checkIfIdExists(InitObject.currentSongHelper?.songId?.toInt() as Int) as Boolean) {
+            InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!,R.drawable.favorite_on))
+        } else {
+            InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!,R.drawable.favorite_off))
+        }
         //TODO:: Db check for fav icon
 
 
@@ -445,6 +452,23 @@ class SongPlayingFragment : Fragment() {
 
     private fun clickHandler() {
 
+        InitObject.favButton?.setOnClickListener {
+            if (InitObject.instanceDB?.checkIfIdExists(InitObject.currentSongHelper?.songId?.toInt() as Int) as Boolean) {
+                InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!, R.drawable.favorite_off))
+                InitObject.instanceDB?.deleteFavorite(InitObject.currentSongHelper?.songId?.toInt() as Int)
+                Toast.makeText(InitObject.myActivity!!, "Removed from Favorite", Toast.LENGTH_SHORT).show()
+            } else {
+                InitObject.favButton?.setImageDrawable(ContextCompat.getDrawable(InitObject.myActivity!!, R.drawable.favorite_on))
+                InitObject.instanceDB?.storeFavorite(
+                    InitObject.currentSongHelper?.songId?.toInt() as Int,
+                    InitObject.currentSongHelper?.songTitle,
+                    InitObject.currentSongHelper?.songArtist,
+                    InitObject.currentSongHelper?.songPath
+                )
+                Toast.makeText(InitObject.myActivity!!, "Added to Favorite", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         InitObject.playPauseButton?.setOnClickListener {
 
             if (InitObject.mediaPlayer?.isPlaying as Boolean) {
@@ -457,5 +481,6 @@ class SongPlayingFragment : Fragment() {
                 InitObject.playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
             }
         }
+
     }
 }
