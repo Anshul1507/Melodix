@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -140,11 +142,9 @@ class FavoriteFragment : Fragment() {
         if (dbInstance?.checkSize() as Int > 0) {
             favSongsList = ArrayList() // Make a new instance
             val listSongsFromDevice = getSongsFromDevice()
-            if (listSongsFromDevice.isEmpty()) {
-                for (item in listSongsFromDevice) {
-                    if (dbInstance?.queryDBList(item.songID) == 1) {
-                        favSongsList!!.add(item)
-                    }
+            for (item in listSongsFromDevice) {
+                if (dbInstance?.queryDBList(item.songID) == 1) {
+                    favSongsList!!.add(item)
                 }
             }
             if (favSongsList!!.isEmpty()) {

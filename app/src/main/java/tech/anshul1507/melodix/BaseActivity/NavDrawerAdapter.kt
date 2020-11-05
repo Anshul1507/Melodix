@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import tech.anshul1507.melodix.FavoriteScreen.FavoriteFragment
 import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.R
 
@@ -17,10 +18,6 @@ class NavDrawerAdapter(
     private var context: Context
 ) :
     RecyclerView.Adapter<NavDrawerAdapter.NavViewHolder>() {
-
-//    private var itemList: ArrayList<String> = itemList
-//    var imageList: IntArray = imageList
-//    var mContext: Context = context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NavViewHolder =
         NavViewHolder(
@@ -43,7 +40,9 @@ class NavDrawerAdapter(
                         .replace(R.id.fragment_container, homeFragment).commit()
                 }
                 1 -> {
-                    //TODO:: Favorite Fragment
+                    val favFragment = FavoriteFragment()
+                    (context as MainActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, favFragment).commit()
                 }
                 2 -> {
                     //TODO:: Settings Fragment
