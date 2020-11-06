@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                 .setContentIntent(pendingNotificationIntent).build()
         }
 
-        BaseObject.notificationManager?.notify(1999, BaseObject.notificationBuilder)
+        BaseObject.notificationManager?.cancel(1999)
 
     }
 
