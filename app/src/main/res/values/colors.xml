@@ -2,11 +2,11 @@
 <resources>
 
     <!-- Primary Colors -->
-    <color name="primary_blue">#051e3e</color>
-    <color name="blue_500">#251e3e</color>
-    <color name="blue_200">#451e3e</color>
-    <color name="primary_purple">#851e3e</color>
-    <color name="purple_700">#651e3e</color>
+    <color name="primary_blue">#0b132b</color>
+    <color name="blue_500">#1c2541</color>
+    <color name="blue_200">#3a506b</color>
+    <color name="light_blue_400">#5bc0be</color>
+    <color name="light_blue_200">#6fffe9</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
@@ -15,7 +15,7 @@
         <item>@color/primary_blue</item>
         <item>@color/blue_500</item>
         <item>@color/blue_200</item>
-        <item>@color/primary_purple</item>
-        <item>@color/purple_700</item>
+        <item>@color/light_blue_400</item>
+        <item>@color/light_blue_200</item>
     </array>
 </resources>
