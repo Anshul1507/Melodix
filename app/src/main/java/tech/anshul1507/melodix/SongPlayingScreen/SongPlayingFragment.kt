@@ -474,20 +474,20 @@ class SongPlayingFragment : Fragment() {
         if (isShuffleON as Boolean) {
             InitObject.currentSongHelper?.isShuffle = true
             InitObject.currentSongHelper?.isLoop = false
-            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
-            InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_icon)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
+            InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_active)
         } else {
             InitObject.currentSongHelper?.isShuffle = false
-            InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+            InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle)
         }
         if (isLoopON as Boolean) {
             InitObject.currentSongHelper?.isShuffle = false
             InitObject.currentSongHelper?.isLoop = true
-            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_icon)
-            InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.rotate_active)
+            InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle)
         } else {
             InitObject.currentSongHelper?.isLoop = false
-            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
         }
 
     }
@@ -547,14 +547,14 @@ class SongPlayingFragment : Fragment() {
 
             if (InitObject.currentSongHelper?.isShuffle as Boolean) {
                 InitObject.currentSongHelper?.isShuffle = false
-                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle)
                 editorShuffle?.putBoolean("feature", false)
                 editorShuffle?.apply()
             } else {
                 InitObject.currentSongHelper?.isShuffle = true;
                 InitObject.currentSongHelper?.isLoop = false
-                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_icon)
-                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_active)
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
                 editorShuffle?.putBoolean("feature", true)
                 editorShuffle?.apply()
                 editorLoop?.putBoolean("feature", false)
@@ -569,7 +569,7 @@ class SongPlayingFragment : Fragment() {
                 Context.MODE_PRIVATE
             )?.edit()
             prefs?.putBoolean("feature", false)
-            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
             InitObject.currentSongHelper?.isLoop = false
 
             if (InitObject.currentSongHelper?.isShuffle as Boolean) {
@@ -585,12 +585,12 @@ class SongPlayingFragment : Fragment() {
                 Context.MODE_PRIVATE
             )?.edit()
             prefs?.putBoolean("feature", false)
-            InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+            InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
             InitObject.currentSongHelper?.isLoop = false
             InitObject.currentSongHelper?.isPlaying = true
 
             if (InitObject.currentSongHelper?.isLoop as Boolean) {
-                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
             }
 
             SongPlayingObject.playPrevious()
@@ -606,7 +606,7 @@ class SongPlayingFragment : Fragment() {
             )?.edit()
             if (InitObject.currentSongHelper?.isLoop as Boolean) {
                 InitObject.currentSongHelper?.isLoop = false
-                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_white_icon)
+                InitObject.loopButton?.setBackgroundResource(R.drawable.loop)
                 editorLoop?.putBoolean("feature", false)
                 editorLoop?.apply()
             } else {
@@ -616,8 +616,8 @@ class SongPlayingFragment : Fragment() {
                 editorShuffle?.apply()
                 InitObject.currentSongHelper?.isLoop = true
                 InitObject.currentSongHelper?.isShuffle = false
-                InitObject.loopButton?.setBackgroundResource(R.drawable.loop_icon)
-                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle_white_icon)
+                InitObject.loopButton?.setBackgroundResource(R.drawable.rotate_active)
+                InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle)
             }
         }
     }
