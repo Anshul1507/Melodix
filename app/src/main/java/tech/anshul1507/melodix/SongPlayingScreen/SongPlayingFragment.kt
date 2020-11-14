@@ -14,9 +14,11 @@ import android.os.Handler
 import android.view.*
 import android.widget.ImageButton
 import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.cleveroad.audiovisualization.AudioVisualization
 import com.cleveroad.audiovisualization.DbmHandler
@@ -37,6 +39,7 @@ class SongPlayingFragment : Fragment() {
     var mAcceleration: Float = 0f
     var mAccelerationCurrent: Float = 0f
     var mAccelerationLast: Float = 0f
+    var audioManager: AudioManager? = null
 
     object InitObject {
         var myActivity: Activity? = null
@@ -58,6 +61,8 @@ class SongPlayingFragment : Fragment() {
         var glView: GLAudioVisualizationView? = null
         var currentSongHelper: CurrentSongHelper? = null
         var songIdx: Int = 0
+
+        var seekBarVolume: SeekBar? = null
 
         var shakeFlag: Int = 0
         var MY_PREFS_NAME = "ShakeFeature"
@@ -298,6 +303,7 @@ class SongPlayingFragment : Fragment() {
         InitObject.songTitleView = view.findViewById(R.id.song_title)
         InitObject.glView = view.findViewById(R.id.visualizer_view)
         InitObject.favButton = view.findViewById(R.id.favorite_icon)
+        InitObject.seekBarVolume = view.findViewById(R.id.seek_bar_volume)
 
         return view
     }
@@ -305,6 +311,14 @@ class SongPlayingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         InitObject.audioVisulization = InitObject.glView as AudioVisualization //After View Creation
+
+        /*SeekBar Volume*/
+        audioManager =
+            InitObject.myActivity?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        InitObject.seekBarVolume?.progress =
+            audioManager!!.getStreamVolume(AudioManager.STREAM_MUSIC) //set pre-volume in seekbar
+        InitObject.seekBarVolume?.max =
+            audioManager!!.getStreamMaxVolume(AudioManager.STREAM_MUSIC) //set max length
     }
 
     override fun onAttach(context: Context) {
@@ -620,9 +634,18 @@ class SongPlayingFragment : Fragment() {
                 InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle)
             }
         }
+
+        InitObject.seekBarVolume?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, newVolume: Int, b: Boolean) {
+                audioManager!!.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
     }
 
-    fun handleShakeFeature() {
+    private fun handleShakeFeature() {
 
         InitObject.mSensorListener = object : SensorEventListener {
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
