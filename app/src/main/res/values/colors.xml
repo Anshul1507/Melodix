@@ -12,10 +12,9 @@
     <color name="white">#FFFFFFFF</color>
 
     <array name="primary_pattern">
-        <item>@color/primary_blue</item>
-        <item>@color/blue_500</item>
-        <item>@color/blue_200</item>
         <item>@color/light_blue_400</item>
-        <item>@color/light_blue_200</item>
+        <item>@color/blue_200</item>
+        <item>@color/blue_500</item>
+        <item>@color/primary_blue</item>
     </array>
 </resources>
