@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tech.anshul1507.melodix">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Permission needed in Audio Visualization lib -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Permission needed in Audio Visualization lib -->
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" /> <!-- Audio visualization view uses OpenGL ES 2.0 for drawing waves -->
@@ -20,6 +19,9 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Melodix">
+        <activity
+            android:name=".EqualizerScreen.EqualizerActivity"
+            android:theme="@style/Theme.Melodix.NoActionBar" />
 
         <receiver android:name=".utils.NotificationService">
             <intent-filter>

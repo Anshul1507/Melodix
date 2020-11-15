@@ -25,15 +25,7 @@
             app:av_wavesFooterHeight="120dp"
             app:av_wavesHeight="60dp" />
 
-        <ImageButton
-            android:id="@+id/favorite_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="11dp"
-            android:background="@drawable/white_circle_icon"
-            android:src="@drawable/favorite_off" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -182,6 +174,31 @@
                 android:minHeight="0dp" />
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/equalizer_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/equalizer" />
+
+            <ImageButton
+                android:id="@+id/favorite_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/favorite_off"
+                android:scaleType="centerCrop" />
+
+        </RelativeLayout>
 
         <SeekBar
             android:id="@+id/seek_bar_volume"

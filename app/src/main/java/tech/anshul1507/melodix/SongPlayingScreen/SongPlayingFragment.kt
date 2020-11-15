@@ -2,11 +2,13 @@ package tech.anshul1507.melodix.SongPlayingScreen
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.AudioManager
+import android.media.Image
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -23,6 +25,7 @@ import com.cleveroad.audiovisualization.AudioVisualization
 import com.cleveroad.audiovisualization.DbmHandler
 import com.cleveroad.audiovisualization.GLAudioVisualizationView
 import tech.anshul1507.melodix.DB.LocalDB
+import tech.anshul1507.melodix.EqualizerScreen.EqualizerActivity
 import tech.anshul1507.melodix.FavoriteScreen.FavoriteFragment
 import tech.anshul1507.melodix.HomeScreen.HomeFragment
 import tech.anshul1507.melodix.Models.CurrentSongHelper
@@ -51,6 +54,7 @@ class SongPlayingFragment : Fragment() {
         var nextButton: ImageButton? = null
         var loopButton: ImageButton? = null
         var shuffleButton: ImageButton? = null
+        var equalizerButton: ImageButton? = null
         var seekBar: SeekBar? = null
         var songArtistView: TextView? = null
         var songTitleView: TextView? = null
@@ -303,6 +307,7 @@ class SongPlayingFragment : Fragment() {
         InitObject.glView = view.findViewById(R.id.visualizer_view)
         InitObject.favButton = view.findViewById(R.id.favorite_icon)
         InitObject.seekBarVolume = view.findViewById(R.id.seek_bar_volume)
+        InitObject.equalizerButton = view.findViewById(R.id.equalizer_btn)
 
         return view
     }
@@ -632,6 +637,14 @@ class SongPlayingFragment : Fragment() {
                 InitObject.loopButton?.setBackgroundResource(R.drawable.rotate_active)
                 InitObject.shuffleButton?.setBackgroundResource(R.drawable.shuffle)
             }
+        }
+        InitObject.equalizerButton?.setOnClickListener {
+            InitObject.myActivity?.startActivity(
+                Intent(
+                    InitObject.myActivity,
+                    EqualizerActivity::class.java
+                )
+            )
         }
 
         InitObject.seekBarVolume?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
